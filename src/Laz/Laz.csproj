@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <PackageId>Laz</PackageId>
+    <Version>0.0.595-rc</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Authors>Vlad Lubenskyi</Authors>
+    <Copyright>Copyright (c) Vladyslav Lubenskyi 2026</Copyright>
+    <Description>Automate mouse movements, keyboard input, and screen capture across Windows, Linux, and macOS.</Description>
+    <PackageProjectUrl>https://github.com/vlad-lubenskyi/laz</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/vlad-lubenskyi/laz</RepositoryUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\.github\marketing-resources\icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Include="..\..\runtimes\**\*" Pack="true" PackagePath="runtimes\" />
+  </ItemGroup>
+
+</Project>

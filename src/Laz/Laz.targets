@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <NativeLibRoot>$(MSBuildThisFileDirectory)..\..\runtimes</NativeLibRoot>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- macOS -->
+    <None Include="$(NativeLibRoot)\osx-x64\native\laz_native.dylib" Condition="Exists('$(NativeLibRoot)\osx-x64\native\laz_native.dylib')">
+      <Link>laz_native.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="$(NativeLibRoot)\osx-arm64\native\laz_native.dylib" Condition="Exists('$(NativeLibRoot)\osx-arm64\native\laz_native.dylib')">
+      <Link>laz_native.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- Linux -->
+    <None Include="$(NativeLibRoot)\linux-x64\native\laz_native.so" Condition="Exists('$(NativeLibRoot)\linux-x64\native\laz_native.so')">
+      <Link>laz_native.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- Windows -->
+    <None Include="$(NativeLibRoot)\win-x64\native\laz_native.dll" Condition="Exists('$(NativeLibRoot)\win-x64\native\laz_native.dll')">
+      <Link>laz_native.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

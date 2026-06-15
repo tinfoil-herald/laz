@@ -1,0 +1,69 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 15,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "hidden": true,
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug Build",
+      "description": "Debug build with sanitizers enabled",
+      "inherits": "default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "ENABLE_FORMATTING": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release Build",
+      "description": "Optimized release build",
+      "inherits": "default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "ENABLE_FORMATTING": "ON"
+      }
+    },
+    {
+      "name": "release-with-analysis",
+      "displayName": "Release Build with Static Analysis",
+      "description": "Release build with clang-tidy and cppcheck enabled",
+      "inherits": "release",
+      "cacheVariables": {
+        "ENABLE_CLANG_TIDY": "ON",
+        "ENABLE_CPPCHECK": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "debug",
+      "displayName": "Build Debug",
+      "description": "Build debug configuration"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "displayName": "Build Release",
+      "description": "Build release configuration"
+    },
+    {
+      "name": "release-with-analysis",
+      "configurePreset": "release-with-analysis",
+      "displayName": "Build Release with Analysis",
+      "description": "Build release with static analysis"
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+name: Build and publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+
+  build-win-x64:
+    name: Build Windows x64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build native
+        run: |
+          cmake -B native/build -S native -G "Visual Studio 17 2022" -A x64
+          cmake --build native/build --config Release
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-win-x64
+          path: runtimes/win-x64/native/
+
+  build-win-arm64:
+    name: Build Windows ARM64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build native (cross-compile ARM64)
+        run: |
+          cmake -B native/build -S native -G "Visual Studio 17 2022" -A ARM64
+          cmake --build native/build --config Release
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-win-arm64
+          path: runtimes/win-arm64/native/
+
+  build-osx-x64:
+    name: Build macOS x64
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build native
+        run: |
+          cmake -B native/build -S native -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=x86_64
+          cmake --build native/build
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-osx-x64
+          path: runtimes/osx-x64/native/
+
+  build-osx-arm64:
+    name: Build macOS ARM64
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build native
+        run: |
+          cmake -B native/build -S native -DCMAKE_BUILD_TYPE=Release
+          cmake --build native/build
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-osx-arm64
+          path: runtimes/osx-arm64/native/
+
+  build-linux-x64:
+    name: Build Linux x64
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y --no-install-recommends \
+            libx11-dev libxtst-dev \
+            libxkbcommon-dev \
+            libpipewire-0.3-dev libglib2.0-dev
+
+      - name: Build native
+        run: |
+          cmake -B native/build -S native -DCMAKE_BUILD_TYPE=Release
+          cmake --build native/build
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-linux-x64
+          path: runtimes/linux-x64/native/
+
+  build-linux-arm64:
+    name: Build Linux ARM64
+    runs-on: ubuntu-26.04-arm
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y --no-install-recommends \
+            libx11-dev libxtst-dev \
+            libxkbcommon-dev \
+            libpipewire-0.3-dev libglib2.0-dev
+
+      - name: Build native
+        run: |
+          cmake -B native/build -S native -DCMAKE_BUILD_TYPE=Release
+          cmake --build native/build
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-linux-arm64
+          path: runtimes/linux-arm64/native/
+
+  publish:
+    name: Pack and publish
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - build-win-x64
+      - build-win-arm64
+      - build-osx-x64
+      - build-osx-arm64
+      - build-linux-x64
+      - build-linux-arm64
+
+    steps:
+      - name: Fail if any build failed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "One or more platform builds failed:"
+          echo '${{ toJSON(needs.*.result) }}'
+          exit 1
+
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-win-x64
+          path: runtimes/win-x64/native/
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-win-arm64
+          path: runtimes/win-arm64/native/
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-osx-x64
+          path: runtimes/osx-x64/native/
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-osx-arm64
+          path: runtimes/osx-arm64/native/
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-linux-x64
+          path: runtimes/linux-x64/native/
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-linux-arm64
+          path: runtimes/linux-arm64/native/
+
+      - name: Build
+        run: dotnet build src/Laz/Laz.csproj -c Release
+
+      - name: Pack
+        run: dotnet pack src/Laz/Laz.csproj -c Release --no-build
+
+      - name: Push to NuGet
+        run: >
+          dotnet nuget push src/Laz/bin/Release/*.nupkg
+          --api-key ${{ secrets.NUGET_API_KEY }}
+          --source https://api.nuget.org/v3/index.json

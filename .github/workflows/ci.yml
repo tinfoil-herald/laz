@@ -1,0 +1,129 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+
+  windows-x64:
+    name: Windows x64
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build native
+        run: |
+          cmake -B native/build -S native -G "Visual Studio 17 2022" -A x64
+          cmake --build native/build --config Release
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build and analyze
+        run: >
+          dotnet build Laz.sln -c Release
+          /p:TreatWarningsAsErrors=true
+          /p:EnableNETAnalyzers=true
+          /p:AnalysisMode=Recommended
+
+      - name: Run unit tests
+        run: >
+          dotnet test src/Laz.Tests/Laz.Tests.csproj -c Release --no-build
+          --collect:"XPlat Code Coverage" --results-directory coverage
+
+      # - name: Upload coverage
+      #   uses: codecov/codecov-action@v5
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     files: '**/coverage.cobertura.xml'
+      #     flags: windows
+      #     fail_ci_if_error: true
+
+  macos-arm64:
+    name: macOS ARM64
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build native
+        run: |
+          cmake -B native/build -S native -DCMAKE_BUILD_TYPE=Release
+          cmake --build native/build
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build and analyze
+        run: >
+          dotnet build Laz.sln -c Release
+          /p:TreatWarningsAsErrors=true
+          /p:EnableNETAnalyzers=true
+          /p:AnalysisMode=Recommended
+
+      - name: Run unit tests
+        run: >
+          dotnet test src/Laz.Tests/Laz.Tests.csproj -c Release --no-build
+          --collect:"XPlat Code Coverage" --results-directory coverage
+
+      # - name: Upload coverage
+      #   uses: codecov/codecov-action@v5
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     files: '**/coverage.cobertura.xml'
+      #     flags: macos
+      #     fail_ci_if_error: true
+
+  linux-x64:
+    name: Linux x64
+    runs-on: ubuntu-26.04
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y --no-install-recommends \
+            libx11-dev libxtst-dev \
+            libxkbcommon-dev \
+            libpipewire-0.3-dev libglib2.0-dev \
+            xvfb
+
+      - name: Build native
+        run: |
+          cmake -B native/build -S native -DCMAKE_BUILD_TYPE=Release
+          cmake --build native/build
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build and analyze
+        run: >
+          dotnet build Laz.sln -c Release
+          /p:TreatWarningsAsErrors=true
+          /p:EnableNETAnalyzers=true
+          /p:AnalysisMode=Recommended
+
+      - name: Run unit tests
+        run: >
+          dotnet test src/Laz.Tests/Laz.Tests.csproj -c Release --no-build
+          --collect:"XPlat Code Coverage" --results-directory coverage
+
+      - name: Run UI tests
+        run: >
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24"
+          dotnet test src/Laz.Tests.UI/Laz.Tests.UI.csproj -c Release --no-build
+          --collect:"XPlat Code Coverage" --results-directory coverage
+
+      # - name: Upload coverage
+      #   uses: codecov/codecov-action@v5
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     files: '**/coverage.cobertura.xml'
+      #     flags: linux
+      #     fail_ci_if_error: true
