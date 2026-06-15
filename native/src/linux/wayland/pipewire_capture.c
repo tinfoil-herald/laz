@@ -4,7 +4,10 @@
 #include "pipewire_capture.h"
 
 #include <errno.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnull-dereference"
 #include <pipewire/pipewire.h>
+#pragma GCC diagnostic pop
 #include <spa/param/format-utils.h>
 #include <spa/param/video/format-utils.h>
 #include <spa/utils/dict.h>
