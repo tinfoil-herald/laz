@@ -14,7 +14,7 @@ jobs:
 
       - name: Build native
         run: |
-          cmake -B native/build -S native -G "Visual Studio 17 2022" -A x64
+          cmake -B native/build -S native -A x64
           cmake --build native/build --config Release
 
       - uses: actions/setup-dotnet@v5
