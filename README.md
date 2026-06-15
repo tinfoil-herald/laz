@@ -30,7 +30,8 @@ dotnet add package Laz
 
 ## Platform support
 
-Laz works on Windows x64/ARM, Linux x64/ARM (glibc), and macOS x64/ARM. On Linux, Laz requires an X server for mouse and keyboard simulation. Supported RIDs: `win-x64`, `win-arm64`, `linux-x64`, `linux-arm64`, `osx-x64`, `osx-arm64`.
+Laz works on Windows x64/ARM, Linux x64/ARM (glibc), and macOS x64/ARM. On Linux, Laz requires an X server for mouse and
+keyboard simulation. Supported RIDs: `win-x64`, `win-arm64`, `linux-x64`, `linux-arm64`, `osx-x64`, `osx-arm64`.
 
 ## Quick start
 
@@ -230,8 +231,8 @@ GitHub Actions [workflows](.github/workflows).
 
 ## Issues and contributing
 
-Bug reports and pull requests are welcome in [Issues][issues-url]. If you found a bug, include your OS, .NET version, 
-and a minimal repro. For new features or larger changes, open an issue first to discuss the approach.
+Bug reports and pull requests are welcome. If you found a bug, include your OS, .NET version, 
+and a minimal reproduction steps.
 
 ## License
 
