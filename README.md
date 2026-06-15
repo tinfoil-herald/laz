@@ -6,10 +6,10 @@
 
 Automate mouse movements, keyboard input, and screen capture across Windows, Linux, and macOS.
 
-[![Build](https://github.com/vlad-lubenskyi/laz/actions/workflows/build.yml/badge.svg)](https://github.com/vlad-lubenskyi/laz/actions)
-[![Tests](https://github.com/vlad-lubenskyi/laz/actions/workflows/ci.yml/badge.svg)](https://github.com/vlad-lubenskyi/laz/actions)
-[![codecov](https://codecov.io/gh/vlad-lubenskyi/laz/badge.svg)](https://codecov.io/gh/vlad-lubenskyi/laz)
-[![NuGet](https://img.shields.io/nuget/v/YOUR_PACKAGE.svg)](https://www.nuget.org/packages/Laz/)
+[![Build](https://github.com/tinfoil-herald/laz/actions/workflows/build.yml/badge.svg)](https://github.com/tinfoil-herald/laz/actions)
+[![Tests](https://github.com/tinfoil-herald/laz/actions/workflows/ci.yml/badge.svg)](https://github.com/tinfoil-herald/laz/actions)
+[![codecov](https://codecov.io/gh/tinfoil-herald/laz/badge.svg)](https://codecov.io/gh/tinfoil-herald/laz)
+[![NuGet](https://img.shields.io/nuget/v/Laz.svg)](https://www.nuget.org/packages/Laz/)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Laz.svg)](https://www.nuget.org/packages/Laz/)
 [![.NET](https://img.shields.io/badge/.NET-6%2B-512BD4)](https://dotnet.microsoft.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -237,5 +237,5 @@ and a minimal repro. For new features or larger changes, open an issue first to 
 
 [Laz][repo-url] is free and open-source software licensed under the [MIT License](LICENSE).
 
-[repo-url]: https://github.com/vlad-lubenskyi/laz
-[issues-url]: https://github.com/vlad-lubenskyi/laz/issues
+[repo-url]: https://github.com/tinfoil-herald/laz
+[issues-url]: https://github.com/tinfoil-herald/laz/issues
