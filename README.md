@@ -6,7 +6,7 @@
 
 Automate mouse movements, keyboard input, and screen capture across Windows, Linux, and macOS.
 
-[![Build](https://github.com/tinfoil-herald/laz/actions/workflows/build.yml/badge.svg)](https://github.com/tinfoil-herald/laz/actions)
+[![Build](https://github.com/tinfoil-herald/laz/actions/workflows/release.yml/badge.svg)](https://github.com/tinfoil-herald/laz/actions)
 [![Tests](https://github.com/tinfoil-herald/laz/actions/workflows/ci.yml/badge.svg)](https://github.com/tinfoil-herald/laz/actions)
 [![codecov](https://codecov.io/gh/tinfoil-herald/laz/badge.svg)](https://codecov.io/gh/tinfoil-herald/laz)
 [![NuGet](https://img.shields.io/nuget/v/Laz.svg)](https://www.nuget.org/packages/Laz/)
