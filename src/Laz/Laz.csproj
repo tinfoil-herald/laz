@@ -26,4 +26,5 @@
     <None Include="..\..\runtimes\**\*" Pack="true" PackagePath="runtimes\" />
   </ItemGroup>
 
+  <Import Project="Laz.targets" />
 </Project>
