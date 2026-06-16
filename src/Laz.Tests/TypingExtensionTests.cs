@@ -27,7 +27,7 @@ public class TypingExtensionTests
     }
 
     [Fact]
-    public void FindTypingActions_DirectMapping_ReturnsChord()
+    public void DirectMappingReturnsChord()
     {
         var expectedChord = new Chord(Key.A);
         var layout = new FakeLayout(direct: expectedChord);
@@ -39,7 +39,7 @@ public class TypingExtensionTests
     }
 
     [Fact]
-    public void FindTypingActions_DeadMapping_ReturnsDeadChord()
+    public void DeadMappingReturnsDeadChord()
     {
         var expectedDeadChord = new DeadChord(new Chord(Key.E), new Chord(Key.Grave));
         var layout = new FakeLayout(dead: expectedDeadChord);
@@ -51,7 +51,7 @@ public class TypingExtensionTests
     }
 
     [Fact]
-    public void FindTypingActions_ComboMapping_ReturnsComboAction()
+    public void ComboMappingReturnsComboAction()
     {
         var expectedCombo = new Chord(Key.E, Modifiers.Alt);
         var layout = new FakeLayout(combo: expectedCombo);
@@ -63,7 +63,7 @@ public class TypingExtensionTests
     }
 
     [Fact]
-    public void FindTypingActions_DirectTakesPriorityOverDead()
+    public void DirectTakesPriorityOverDead()
     {
         var directChord = new Chord(Key.A);
         var deadChord = new DeadChord(new Chord(Key.A), new Chord(Key.Grave));
@@ -76,7 +76,7 @@ public class TypingExtensionTests
     }
 
     [Fact]
-    public void FindTypingActions_DeadTakesPriorityOverCombo()
+    public void DeadTakesPriorityOverCombo()
     {
         var deadChord = new DeadChord(new Chord(Key.E), new Chord(Key.Grave));
         var comboChord = new Chord(Key.E, Modifiers.Alt);
@@ -89,7 +89,7 @@ public class TypingExtensionTests
     }
 
     [Fact]
-    public void FindTypingActions_NoMapping_NoFallback_Throws()
+    public void NoMappingNoFallbackThrows()
     {
         var layout = new FakeLayout();
 
@@ -100,7 +100,7 @@ public class TypingExtensionTests
     }
 
     [Fact]
-    public void FindTypingActions_NoMapping_ClipboardFallbackOnNonLinux_ReturnsClipboardPaste()
+    public void NoMappingClipboardFallbackOnNonLinuxReturnsClipboardPaste()
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             return; // clipboard fallback is intentionally disabled on Linux
@@ -114,7 +114,7 @@ public class TypingExtensionTests
     }
 
     [Fact]
-    public void FindTypingActions_ClipboardFallbackFalse_Throws()
+    public void ClipboardFallbackFalseThrows()
     {
         var layout = new FakeLayout();
 
@@ -123,7 +123,7 @@ public class TypingExtensionTests
     }
 
     [Fact]
-    public void FindTypingActions_DirectMapping_WithModifiers_ReturnsChordWithModifiers()
+    public void DirectMappingWithModifiersReturnsChordWithModifiers()
     {
         var shiftedChord = new Chord(Key.A, Modifiers.Shift);
         var layout = new FakeLayout(direct: shiftedChord);

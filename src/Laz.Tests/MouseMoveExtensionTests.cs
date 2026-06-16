@@ -63,7 +63,7 @@ public class MouseMoveExtensionTests
     #region LinearInterpolate
 
     [Fact]
-    public void LinearInterpolate_AtT0_ReturnsStart()
+    public void LinearInterpolateAtT0ReturnsStart()
     {
         var result = MouseMoveExtension.LinearInterpolate(new Point(10, 20), new Point(100, 200), 0);
 
@@ -72,7 +72,7 @@ public class MouseMoveExtensionTests
     }
 
     [Fact]
-    public void LinearInterpolate_AtT1_ReturnsEnd()
+    public void LinearInterpolateAtT1ReturnsEnd()
     {
         var result = MouseMoveExtension.LinearInterpolate(new Point(10, 20), new Point(100, 200), 1);
 
@@ -81,7 +81,7 @@ public class MouseMoveExtensionTests
     }
 
     [Fact]
-    public void LinearInterpolate_AtMidpoint_ReturnsAverage()
+    public void LinearInterpolateAtMidpointReturnsAverage()
     {
         var result = MouseMoveExtension.LinearInterpolate(new Point(0, 0), new Point(100, 200), 0.5);
 
@@ -90,7 +90,7 @@ public class MouseMoveExtensionTests
     }
 
     [Fact]
-    public void LinearInterpolate_AtQuarter_ReturnsCorrectValue()
+    public void LinearInterpolateAtQuarterReturnsCorrectValue()
     {
         var result = MouseMoveExtension.LinearInterpolate(new Point(0, 0), new Point(200, 400), 0.25);
 
@@ -99,7 +99,7 @@ public class MouseMoveExtensionTests
     }
 
     [Fact]
-    public void LinearInterpolate_SameStartAndEnd_ReturnsPoint()
+    public void LinearInterpolateSameStartAndEndReturnsPoint()
     {
         var result = MouseMoveExtension.LinearInterpolate(new Point(42, 17), new Point(42, 17), 0.73);
 
@@ -108,7 +108,7 @@ public class MouseMoveExtensionTests
     }
 
     [Fact]
-    public void LinearInterpolate_NegativeCoordinates()
+    public void LinearInterpolateNegativeCoordinates()
     {
         var result = MouseMoveExtension.LinearInterpolate(new Point(-100, -200), new Point(100, 200), 0.5);
 
@@ -121,38 +121,38 @@ public class MouseMoveExtensionTests
     #region HasMovedSignificantly
 
     [Fact]
-    public void HasMovedSignificantly_NoMovement_ReturnsFalse()
+    public void HasMovedSignificantlyNoMovementReturnsFalse()
     {
         Assert.False(MouseMoveExtension.HasMovedSignificantly((10, 20), (10, 20)));
     }
 
     [Fact]
-    public void HasMovedSignificantly_SubPixelMovement_ReturnsFalse()
+    public void HasMovedSignificantlySubPixelReturnsFalse()
     {
         Assert.False(MouseMoveExtension.HasMovedSignificantly((10, 20), (10.5, 20.5)));
     }
 
     [Fact]
-    public void HasMovedSignificantly_ExactlyOnePixel_ReturnsTrue()
+    public void HasMovedSignificantlyExactlyOnePixelReturnsTrue()
     {
         Assert.True(MouseMoveExtension.HasMovedSignificantly((10, 20), (11, 20)));
     }
 
     [Fact]
-    public void HasMovedSignificantly_LargeMovement_ReturnsTrue()
+    public void HasMovedSignificantlyLargeMovementReturnsTrue()
     {
         Assert.True(MouseMoveExtension.HasMovedSignificantly((0, 0), (100, 100)));
     }
 
     [Fact]
-    public void HasMovedSignificantly_DiagonalSubPixel_ReturnsFalse()
+    public void HasMovedSignificantlyDiagonalSubPixelReturnsFalse()
     {
         // sqrt(0.6^2 + 0.6^2) = ~0.85 < 1
         Assert.False(MouseMoveExtension.HasMovedSignificantly((0, 0), (0.6, 0.6)));
     }
 
     [Fact]
-    public void HasMovedSignificantly_DiagonalJustOverThreshold_ReturnsTrue()
+    public void HasMovedSignificantlyDiagonalJustOverThresholdReturnsTrue()
     {
         // sqrt(0.8^2 + 0.8^2) = ~1.13 >= 1 (squared distance = 1.28 >= 1.0)
         Assert.True(MouseMoveExtension.HasMovedSignificantly((0, 0), (0.8, 0.8)));
@@ -171,7 +171,7 @@ public class MouseMoveExtensionTests
     [InlineData(-0.4, 0)]
     [InlineData(-0.6, -1)]
     [InlineData(99.9, 100)]
-    public void RoundToInt_ReturnsExpectedValue(double input, int expected)
+    public void RoundToIntReturnsExpectedValue(double input, int expected)
     {
         Assert.Equal(expected, MouseMoveExtension.RoundToInt(input));
     }

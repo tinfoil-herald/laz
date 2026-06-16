@@ -11,7 +11,7 @@ public class CubicBezierTests
     private const double Tolerance = 1e-10;
 
     [Fact]
-    public void Evaluate_AtT0_ReturnsStartPoint()
+    public void EvaluateAtT0ReturnsStartPoint()
     {
         var result = CubicBezier.Evaluate((0, 0), (10, 20), (30, 40), (100, 100), 0);
 
@@ -20,7 +20,7 @@ public class CubicBezierTests
     }
 
     [Fact]
-    public void Evaluate_AtT1_ReturnsEndPoint()
+    public void EvaluateAtT1ReturnsEndPoint()
     {
         var result = CubicBezier.Evaluate((0, 0), (10, 20), (30, 40), (100, 100), 1);
 
@@ -29,7 +29,7 @@ public class CubicBezierTests
     }
 
     [Fact]
-    public void Evaluate_CollinearPoints_ProducesLinearInterpolation()
+    public void EvaluateCollinearPointsProducesLinearInterpolation()
     {
         // All four points on the line y = x
         var result = CubicBezier.Evaluate((0, 0), (33.33, 33.33), (66.67, 66.67), (100, 100), 0.5);
@@ -39,7 +39,7 @@ public class CubicBezierTests
     }
 
     [Fact]
-    public void Evaluate_AtMidpoint_ReturnsExpectedValue()
+    public void EvaluateAtMidpointReturnsExpectedValue()
     {
         // P0=(0,0), P1=(0,100), P2=(100,100), P3=(100,0)
         // At t=0.5: x = 0.125*0 + 0.375*0 + 0.375*100 + 0.125*100 = 50
@@ -51,7 +51,7 @@ public class CubicBezierTests
     }
 
     [Fact]
-    public void Evaluate_SymmetricCurve_XIsSymmetric()
+    public void EvaluateSymmetricCurveXIsSymmetric()
     {
         // Symmetric control points: evaluating at t and 1-t should mirror in x
         var p0 = (0.0, 0.0);
@@ -66,7 +66,7 @@ public class CubicBezierTests
     }
 
     [Fact]
-    public void Evaluate_NegativeCoordinates_WorksCorrectly()
+    public void EvaluateNegativeCoordinatesWorksCorrectly()
     {
         var result = CubicBezier.Evaluate((-50, -50), (-20, -10), (20, 10), (50, 50), 0);
 
@@ -80,7 +80,7 @@ public class CubicBezierTests
     }
 
     [Fact]
-    public void Evaluate_AllSamePoint_ReturnsPoint()
+    public void EvaluateAllSamePointReturnsPoint()
     {
         var result = CubicBezier.Evaluate((42, 17), (42, 17), (42, 17), (42, 17), 0.73);
 
