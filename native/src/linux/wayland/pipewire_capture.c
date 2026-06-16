@@ -268,6 +268,43 @@ static const struct pw_stream_events g_streamEvents = {
     .process = onProcess,
 };
 
+// Releases all resources owned by a CaptureApp. Must be called with the loop unlocked.
+// Nulls out freed/destroyed fields so the function is safe to call on partially-initialized state.
+static void cleanupCaptureApp(CaptureApp *app) {
+  if (app->stream) {
+    pw_thread_loop_lock(app->loop);
+    pw_stream_disconnect(app->stream);
+    pw_stream_destroy(app->stream);
+    pw_thread_loop_unlock(app->loop);
+    app->stream = NULL;
+  }
+
+  free(app->target_object);
+  app->target_object = NULL;
+
+  free(app->bgrx_buf);
+  app->bgrx_buf = NULL;
+
+  if (app->core) {
+    pw_core_disconnect(app->core);
+    app->core = NULL;
+  }
+
+  if (app->loop) {
+    pw_thread_loop_stop(app->loop);
+  }
+
+  if (app->context) {
+    pw_context_destroy(app->context);
+    app->context = NULL;
+  }
+
+  if (app->loop) {
+    pw_thread_loop_destroy(app->loop);
+    app->loop = NULL;
+  }
+}
+
 // Captures a single screen frame via PipeWire and returns it in outFrame.
 bool pipewireCaptureFrame(int pipewireFd, uint32_t nodeId, CapturedFrame *outFrame) {
   memset(outFrame, 0, sizeof(*outFrame));
@@ -319,11 +356,8 @@ bool pipewireCaptureFrame(int pipewireFd, uint32_t nodeId, CapturedFrame *outFra
   }
 
   if (!app.target_object || app.has_failed) {
-    pw_core_disconnect(app.core);
     pw_thread_loop_unlock(app.loop);
-    pw_thread_loop_stop(app.loop);
-    pw_context_destroy(app.context);
-    pw_thread_loop_destroy(app.loop);
+    cleanupCaptureApp(&app);
     return false;
   }
 
@@ -333,12 +367,8 @@ bool pipewireCaptureFrame(int pipewireFd, uint32_t nodeId, CapturedFrame *outFra
                                                PW_KEY_TARGET_OBJECT, app.target_object, NULL));
 
   if (!app.stream) {
-    free(app.target_object);
-    pw_core_disconnect(app.core);
     pw_thread_loop_unlock(app.loop);
-    pw_thread_loop_stop(app.loop);
-    pw_context_destroy(app.context);
-    pw_thread_loop_destroy(app.loop);
+    cleanupCaptureApp(&app);
     return false;
   }
 
@@ -363,13 +393,8 @@ bool pipewireCaptureFrame(int pipewireFd, uint32_t nodeId, CapturedFrame *outFra
   const enum pw_stream_flags streamFlags = PW_STREAM_FLAG_AUTOCONNECT | PW_STREAM_FLAG_MAP_BUFFERS;
   int res = pw_stream_connect(app.stream, PW_DIRECTION_INPUT, PW_ID_ANY, streamFlags, params, 1);
   if (res < 0) {
-    pw_stream_destroy(app.stream);
-    free(app.target_object);
-    pw_core_disconnect(app.core);
     pw_thread_loop_unlock(app.loop);
-    pw_thread_loop_stop(app.loop);
-    pw_context_destroy(app.context);
-    pw_thread_loop_destroy(app.loop);
+    cleanupCaptureApp(&app);
     return false;
   }
 
@@ -381,14 +406,8 @@ bool pipewireCaptureFrame(int pipewireFd, uint32_t nodeId, CapturedFrame *outFra
   }
 
   if (app.has_failed || !app.has_format) {
-    pw_stream_disconnect(app.stream);
-    pw_stream_destroy(app.stream);
-    free(app.target_object);
-    pw_core_disconnect(app.core);
     pw_thread_loop_unlock(app.loop);
-    pw_thread_loop_stop(app.loop);
-    pw_context_destroy(app.context);
-    pw_thread_loop_destroy(app.loop);
+    cleanupCaptureApp(&app);
     return false;
   }
 
@@ -411,18 +430,7 @@ bool pipewireCaptureFrame(int pipewireFd, uint32_t nodeId, CapturedFrame *outFra
     success = true;
   }
 
-  pw_thread_loop_lock(app.loop);
-  pw_stream_disconnect(app.stream);
-  pw_stream_destroy(app.stream);
-  pw_thread_loop_unlock(app.loop);
-
-  free(app.target_object);
-  free(app.bgrx_buf);
-  pw_core_disconnect(app.core);
-
-  pw_thread_loop_stop(app.loop);
-  pw_context_destroy(app.context);
-  pw_thread_loop_destroy(app.loop);
+  cleanupCaptureApp(&app);
 
   return success;
 }
