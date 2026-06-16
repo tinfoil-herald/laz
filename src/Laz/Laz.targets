@@ -18,6 +18,14 @@
       <Link>laz_native.so</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="$(NativeLibRoot)\linux-x64\native\laz_screen_x11.so" Condition="Exists('$(NativeLibRoot)\linux-x64\native\laz_screen_x11.so')">
+      <Link>laz_screen_x11.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="$(NativeLibRoot)\linux-x64\native\laz_screen_wayland.so" Condition="Exists('$(NativeLibRoot)\linux-x64\native\laz_screen_wayland.so')">
+      <Link>laz_screen_wayland.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <!-- Windows -->
     <None Include="$(NativeLibRoot)\win-x64\native\laz_native.dll" Condition="Exists('$(NativeLibRoot)\win-x64\native\laz_native.dll')">
       <Link>laz_native.dll</Link>
