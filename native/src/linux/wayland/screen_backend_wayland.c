@@ -73,6 +73,14 @@ static void saveRestoreToken(const char *token) {
   fclose(f);
 }
 
+static void fillBlackOpaque(uint8_t *buffer, int width, int height) {
+  const size_t totalBytes = (size_t)width * (size_t)height * 4;
+  memset(buffer, 0, totalBytes);
+  for (size_t i = 3; i < totalBytes; i += 4) {
+    buffer[i] = 255;
+  }
+}
+
 static void cropToBuffer(const CapturedFrame *frame, int x, int y, int width, int height,
                          uint8_t *output) {
   const int outWidth = width;
@@ -133,6 +141,7 @@ LAZ_EXPORT bool lazScreenCapture(int x, int y, int width, int height, void *buff
     return false;
   }
 
+  fillBlackOpaque((uint8_t *)buffer, width, height);
   cropToBuffer(&frame, x, y, width, height, (uint8_t *)buffer);
 
   free(frame.data);
