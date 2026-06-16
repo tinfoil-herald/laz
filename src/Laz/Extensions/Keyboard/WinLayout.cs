@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Laz.Native;
 
@@ -12,10 +13,10 @@ namespace Laz.Extensions.Keyboard;
 /// </summary>
 internal class WinLayout : Layout<IntPtr>
 {
-    private static readonly Dictionary<IntPtr, Dictionary<char, Chord>> _directMaps = new();
-    private static readonly Dictionary<IntPtr, Dictionary<char, DeadChord>> _deadKeyMaps = new();
-    protected override Dictionary<IntPtr, Dictionary<char, Chord>> DirectMaps => _directMaps;
-    protected override Dictionary<IntPtr, Dictionary<char, DeadChord>> DeadKeyMaps => _deadKeyMaps;
+    private static readonly ConcurrentDictionary<IntPtr, Dictionary<char, Chord>> _directMaps = new();
+    private static readonly ConcurrentDictionary<IntPtr, Dictionary<char, DeadChord>> _deadKeyMaps = new();
+    protected override ConcurrentDictionary<IntPtr, Dictionary<char, Chord>> DirectMaps => _directMaps;
+    protected override ConcurrentDictionary<IntPtr, Dictionary<char, DeadChord>> DeadKeyMaps => _deadKeyMaps;
 
     /// <summary>
     /// Modifier combinations to probe. AltGr is Ctrl+Alt on Windows.

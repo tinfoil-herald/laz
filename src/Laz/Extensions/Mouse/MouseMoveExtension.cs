@@ -173,8 +173,8 @@ public static class MouseMoveExtension
     private static (double x, double y) LinearInterpolate(Point start, Point end, double t)
     {
         return (
-            x: start.X + (end.X - start.X) * t,
-            y: start.Y + (end.Y - start.Y) * t
+            x: start.X + ((double)end.X - start.X) * t,
+            y: start.Y + ((double)end.Y - start.Y) * t
         );
     }
 
