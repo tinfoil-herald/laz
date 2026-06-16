@@ -113,7 +113,6 @@ jobs:
 
       - name: Run unit tests
         run: >
-          DISPLAY=:0
           dotnet test src/Laz.Tests/Laz.Tests.csproj -c Release --no-build
           --collect:"XPlat Code Coverage" --results-directory coverage
 

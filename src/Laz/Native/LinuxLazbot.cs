@@ -8,28 +8,31 @@ namespace Laz.Native;
 
 internal class LinuxLazbot : NativeLazbot
 {
-    internal LinuxLazbot()
+    public override void MouseUp(MouseButton button)
+    {
+        EnsureX11Input();
+        sendMouseUp(button);
+    }
+
+    public override void MouseDown(MouseButton button)
+    {
+        EnsureX11Input();
+        sendMouseDown(button);
+    }
+
+    public override void JumpTo(int x, int y)
+    {
+        EnsureX11Input();
+        sendMouseMove(x, y);
+    }
+
+    private static void EnsureX11Input()
     {
         if (!isX11InputAvailable())
             throw new PlatformNotSupportedException(
                 "Mouse and keyboard input require an X11 display (DISPLAY is not set). " +
                 "Pure Wayland sessions are not supported for input injection. " +
                 "Enable XWayland or set the DISPLAY environment variable.");
-    }
-
-    public override void MouseUp(MouseButton button)
-    {
-        sendMouseUp(button);
-    }
-
-    public override void MouseDown(MouseButton button)
-    {
-        sendMouseDown(button);
-    }
-
-    public override void JumpTo(int x, int y)
-    {
-        sendMouseMove(x, y);
     }
 
     #region P/Invoke Declarations
