@@ -24,7 +24,12 @@ Automate mouse movements, keyboard input, and screen capture across Windows, Lin
 
 ## Demo
 
+<details>
+<summary>Screen recording: test Avalonia app on macOS.</summary>
+
 <video src="https://github.com/user-attachments/assets/09fc686f-c8eb-44a1-bb32-a190f857f443"></video>
+
+</details>
 
 ## Install
 
