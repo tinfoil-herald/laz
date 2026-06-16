@@ -12,7 +12,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "laz_api_linux.h"
+#include "laz_api.h"
 #include "screen_backend.h"
 
 typedef enum { DS_UNKNOWN, DS_X11, DS_WAYLAND, DS_XWAYLAND } DisplayServer;
@@ -161,6 +161,9 @@ bool captureScreen(int x, int y, int width, int height, void* buffer) {
   }
 
   if (width <= 0 || height <= 0) {
+    return false;
+  }
+  if (width > LAZ_MAX_CAPTURE_DIMENSION || height > LAZ_MAX_CAPTURE_DIMENSION) {
     return false;
   }
 

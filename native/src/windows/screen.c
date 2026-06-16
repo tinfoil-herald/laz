@@ -11,6 +11,9 @@ LAZ_EXPORT bool LAZ_CALL captureScreen(int x, int y, int width, int height, void
   if (buffer == NULL || width <= 0 || height <= 0) {
     return false;
   }
+  if (width > LAZ_MAX_CAPTURE_DIMENSION || height > LAZ_MAX_CAPTURE_DIMENSION) {
+    return false;
+  }
 
   bool success = false;
 
@@ -58,8 +61,8 @@ LAZ_EXPORT bool LAZ_CALL captureScreen(int x, int y, int width, int height, void
       // Set alpha channel to 255 (opaque) for all pixels.
       // Windows returns BGRX, we need BGRA with A=255.
       unsigned char* pixels = (unsigned char*)buffer;
-      int totalPixels = width * height;
-      for (int i = 0; i < totalPixels; i++) {
+      size_t totalPixels = (size_t)width * (size_t)height;
+      for (size_t i = 0; i < totalPixels; i++) {
         pixels[i * 4 + 3] = 255;  // Set alpha byte
       }
       success = true;
