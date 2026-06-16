@@ -3,7 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <PackageId>Laz</PackageId>
     <Version>0.0.595-rc</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Vlad Lubenskyi</Authors>
     <Copyright>Copyright (c) Vladyslav Lubenskyi 2026</Copyright>
@@ -25,6 +25,28 @@
   <ItemGroup>
     <None Include="..\..\runtimes\**\*" Pack="true" PackagePath="runtimes\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <RequiredNativeAsset Include="..\..\runtimes\win-x64\native\laz_native.dll" />
+    <RequiredNativeAsset Include="..\..\runtimes\win-arm64\native\laz_native.dll" />
+    <RequiredNativeAsset Include="..\..\runtimes\linux-x64\native\laz_native.so" />
+    <RequiredNativeAsset Include="..\..\runtimes\linux-x64\native\laz_screen_x11.so" />
+    <RequiredNativeAsset Include="..\..\runtimes\linux-x64\native\laz_screen_wayland.so" />
+    <RequiredNativeAsset Include="..\..\runtimes\linux-arm64\native\laz_native.so" />
+    <RequiredNativeAsset Include="..\..\runtimes\linux-arm64\native\laz_screen_x11.so" />
+    <RequiredNativeAsset Include="..\..\runtimes\linux-arm64\native\laz_screen_wayland.so" />
+    <RequiredNativeAsset Include="..\..\runtimes\osx-x64\native\laz_native.dylib" />
+    <RequiredNativeAsset Include="..\..\runtimes\osx-arm64\native\laz_native.dylib" />
+  </ItemGroup>
+
+  <Target Name="ValidateNativeAssetsForPack" BeforeTargets="GenerateNuspec" Condition="'$(SkipNativeAssetValidation)' != 'true'">
+    <ItemGroup>
+      <MissingNativeAsset Include="@(RequiredNativeAsset)" Condition="!Exists('%(RequiredNativeAsset.FullPath)')" />
+    </ItemGroup>
+    <Error
+      Condition="'@(MissingNativeAsset)' != ''"
+      Text="Cannot pack Laz because required native runtime assets are missing: @(MissingNativeAsset->'%(Identity)', ', '). Build all supported native assets first, or set SkipNativeAssetValidation=true only for local experimental packages." />
+  </Target>
 
   <Import Project="Laz.targets" />
 </Project>
