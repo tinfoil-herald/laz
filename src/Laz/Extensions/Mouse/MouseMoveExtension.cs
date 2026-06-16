@@ -170,7 +170,7 @@ public static class MouseMoveExtension
         return mouse;
     }
 
-    private static (double x, double y) LinearInterpolate(Point start, Point end, double t)
+    internal static (double x, double y) LinearInterpolate(Point start, Point end, double t)
     {
         return (
             x: start.X + ((double)end.X - start.X) * t,
@@ -178,14 +178,14 @@ public static class MouseMoveExtension
         );
     }
 
-    private static bool HasMovedSignificantly((double x, double y) last, (double x, double y) current)
+    internal static bool HasMovedSignificantly((double x, double y) last, (double x, double y) current)
     {
         var dx = current.x - last.x;
         var dy = current.y - last.y;
         return dx * dx + dy * dy >= 1.0;
     }
 
-    private static int RoundToInt(double value)
+    internal static int RoundToInt(double value)
     {
         return (int)Math.Round(value);
     }
