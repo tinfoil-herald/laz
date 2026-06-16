@@ -4,6 +4,7 @@
 #include "xdisplay.h"
 
 #include <X11/Xlib.h>
+#include <stdbool.h>
 #include <stdlib.h> /* For atexit() */
 
 static Display *g_mainDisplay = NULL;
@@ -34,3 +35,5 @@ Display *getMainDisplay(void) {
 
   return g_mainDisplay;
 }
+
+bool isX11InputAvailable(void) { return getMainDisplay() != NULL; }

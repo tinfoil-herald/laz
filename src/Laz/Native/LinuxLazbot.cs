@@ -1,12 +1,22 @@
 // Copyright (c) 2026 Vladyslav Lubenskyi
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Runtime.InteropServices;
 
 namespace Laz.Native;
 
 internal class LinuxLazbot : NativeLazbot
 {
+    internal LinuxLazbot()
+    {
+        if (!isX11InputAvailable())
+            throw new PlatformNotSupportedException(
+                "Mouse and keyboard input require an X11 display (DISPLAY is not set). " +
+                "Pure Wayland sessions are not supported for input injection. " +
+                "Enable XWayland or set the DISPLAY environment variable.");
+    }
+
     public override void MouseUp(MouseButton button)
     {
         sendMouseUp(button);
@@ -32,6 +42,10 @@ internal class LinuxLazbot : NativeLazbot
 
     [DllImport(LibraryName, EntryPoint = "sendMouseMove")]
     private static extern void sendMouseMove(int x, int y);
+
+    [DllImport(LibraryName, EntryPoint = "isX11InputAvailable")]
+    [return: MarshalAs(UnmanagedType.I1)]
+    private static extern bool isX11InputAvailable();
 
     [DllImport(LibraryName, EntryPoint = "getKeyboardLayoutId")]
     internal static extern int getKeyboardLayoutId();
