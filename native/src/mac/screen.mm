@@ -80,6 +80,12 @@ bool captureScreen(int x, int y, int width, int height, void* buffer) {
                    }
 
                    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+                   if (colorSpace == nullptr) {
+                     free(temp);
+                     dispatch_semaphore_signal(semaphore);
+                     return;
+                   }
+
                    // NoneSkipFirst: ignore alpha, always write 0xFF. Avoids premultiplied
                    // RGB values that would corrupt colors for semi-transparent pixels.
                    CGContextRef context = CGBitmapContextCreate(
