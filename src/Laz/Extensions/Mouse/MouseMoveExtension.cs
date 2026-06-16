@@ -73,18 +73,23 @@ public static class MouseMoveExtension
         mouse.JumpTo(start);
         mouse.Press().Delay();
 
-        if (dragPreamble)
+        try
         {
-            Delays.WaitFor(DragPreambleDelay);
-            var newStart = PerformDragPreamble(mouse, start);
-            mouse.MoveTo(newStart, target, duration, moveFunction, easingFunction);
+            if (dragPreamble)
+            {
+                Delays.WaitFor(DragPreambleDelay);
+                var newStart = PerformDragPreamble(mouse, start);
+                mouse.MoveTo(newStart, target, duration, moveFunction, easingFunction);
+            }
+            else
+            {
+                mouse.MoveTo(start, target, duration, moveFunction, easingFunction);
+            }
         }
-        else
+        finally
         {
-            mouse.MoveTo(start, target, duration, moveFunction, easingFunction);
+            mouse.Release();
         }
-
-        mouse.Release();
         return mouse;
     }
 
