@@ -24,7 +24,7 @@ Automate mouse movements, keyboard input, and screen capture across Windows, Lin
 
 ## Demo
 
-<video src="https://github.com/user-attachments/assets/af33020c-fac6-42a1-8fad-c3e080254fc3" width="44" height="720"></video>
+<video src="https://github.com/user-attachments/assets/09fc686f-c8eb-44a1-bb32-a190f857f443"></video>
 
 ## Install
 
