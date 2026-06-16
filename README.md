@@ -22,6 +22,10 @@ Automate mouse movements, keyboard input, and screen capture across Windows, Lin
   <img src=".github/marketing-resources/demo.gif" width="600px" alt="Laz Demo">
 </p>
 
+## Demo
+
+<video src="https://github.com/user-attachments/assets/af33020c-fac6-42a1-8fad-c3e080254fc3" width="44" height="720"></video>
+
 ## Install
 
 ```
