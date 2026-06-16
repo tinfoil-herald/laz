@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(LazNative
-    VERSION 0.0.595
+    VERSION 0.695.0
     LANGUAGES C CXX
     DESCRIPTION "Native libraries for Laz"
 )
