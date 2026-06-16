@@ -3,17 +3,22 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <pthread.h>
 #include <stdint.h>
 #include <string.h>
 
 #include "screen_backend.h"
 
 static Display *g_display = NULL;
+static pthread_once_t g_displayOnce = PTHREAD_ONCE_INIT;
+
+static void initDisplay(void) {
+  XInitThreads();
+  g_display = XOpenDisplay(NULL);
+}
 
 static Display *getDisplay(void) {
-  if (g_display == NULL) {
-    g_display = XOpenDisplay(NULL);
-  }
+  pthread_once(&g_displayOnce, initDisplay);
   return g_display;
 }
 
