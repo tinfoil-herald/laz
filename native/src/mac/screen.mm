@@ -24,7 +24,7 @@ bool captureScreen(int x, int y, int width, int height, void* buffer) {
   }
 
   auto state = std::make_shared<CaptureState>();
-  __block const auto& sharedState = state;
+  const auto sharedState = state;
   dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
 
   [SCShareableContent
