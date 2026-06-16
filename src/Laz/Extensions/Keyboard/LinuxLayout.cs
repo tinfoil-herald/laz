@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Vladyslav Lubenskyi
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Laz.Native;
 
@@ -11,11 +12,11 @@ namespace Laz.Extensions.Keyboard;
 /// </summary>
 internal class LinuxLayout : Layout<int>
 {
-    private static readonly Dictionary<int, Dictionary<char, Chord>> _directMaps = new();
-    private static readonly Dictionary<int, Dictionary<char, DeadChord>> _deadKeyMaps = new();
-    
-    protected override Dictionary<int, Dictionary<char, Chord>> DirectMaps => _directMaps;
-    protected override Dictionary<int, Dictionary<char, DeadChord>> DeadKeyMaps => _deadKeyMaps;
+    private static readonly ConcurrentDictionary<int, Dictionary<char, Chord>> _directMaps = new();
+    private static readonly ConcurrentDictionary<int, Dictionary<char, DeadChord>> _deadKeyMaps = new();
+
+    protected override ConcurrentDictionary<int, Dictionary<char, Chord>> DirectMaps => _directMaps;
+    protected override ConcurrentDictionary<int, Dictionary<char, DeadChord>> DeadKeyMaps => _deadKeyMaps;
 
     /// <summary>
     /// XKB shift levels mapped to modifier combinations. Where:

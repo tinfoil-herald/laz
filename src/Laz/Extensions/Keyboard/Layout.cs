@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -41,8 +42,8 @@ internal interface ILayout
 
 internal abstract class Layout<TLayoutId> : ILayout
 {
-    protected abstract Dictionary<TLayoutId, Dictionary<char, Chord>> DirectMaps { get; }
-    protected abstract Dictionary<TLayoutId, Dictionary<char, DeadChord>> DeadKeyMaps { get; }
+    protected abstract ConcurrentDictionary<TLayoutId, Dictionary<char, Chord>> DirectMaps { get; }
+    protected abstract ConcurrentDictionary<TLayoutId, Dictionary<char, DeadChord>> DeadKeyMaps { get; }
 
     private static readonly Dictionary<String, Chord> SpecialKeys = new()
     {
@@ -69,27 +70,13 @@ internal abstract class Layout<TLayoutId> : ILayout
     private Dictionary<char, Chord> GetDirectMap()
     {
         var layoutId = GetKeyboardLayoutId();
-        if (DirectMaps.TryGetValue(layoutId, out var directMap))
-        {
-            return directMap;
-        }
-
-        directMap = BuildDirectMap(layoutId);
-        DirectMaps[layoutId] = directMap;
-        return directMap;
+        return DirectMaps.GetOrAdd(layoutId, BuildDirectMap);
     }
 
     private Dictionary<char, DeadChord> GetDeadMap()
     {
         var layoutId = GetKeyboardLayoutId();
-        if (DeadKeyMaps.TryGetValue(layoutId, out var deadMap))
-        {
-            return deadMap;
-        }
-
-        deadMap = BuildDeadKeyMap(layoutId, GetDirectMap());
-        DeadKeyMaps[layoutId] = deadMap;
-        return deadMap;
+        return DeadKeyMaps.GetOrAdd(layoutId, id => BuildDeadKeyMap(id, GetDirectMap()));
     }
 
     protected abstract TLayoutId GetKeyboardLayoutId();
