@@ -117,9 +117,12 @@ internal class WinLayout : Layout<IntPtr>
     // Using space as an arbitrary test button.
     private const Key TestKey = Key.Space;
 
-    public override bool TryComboMapping(char character, out TypingAction action)
+    public override bool TryComboMapping(string token, out TypingAction action)
     {
         action = null;
+
+        if (token.Length != 1) return false;
+        var character = token[0];
 
         int code;
         if (character < 128) return false;

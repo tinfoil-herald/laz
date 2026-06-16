@@ -32,11 +32,11 @@ internal interface ILayout
         throw new PlatformNotSupportedException();
     }
 
-    bool TryDirectMapping(char character, out TypingAction action);
+    bool TryDirectMapping(string token, out TypingAction action);
 
-    bool TryDeadMapping(char character, out TypingAction action);
+    bool TryDeadMapping(string token, out TypingAction action);
 
-    bool TryComboMapping(char character, out TypingAction action);
+    bool TryComboMapping(string token, out TypingAction action);
 }
 
 internal abstract class Layout<TLayoutId> : ILayout
@@ -48,6 +48,7 @@ internal abstract class Layout<TLayoutId> : ILayout
     {
         { "\n", new Chord(Key.Enter) },
         { "\r\n", new Chord(Key.Enter) },
+        { "\r", new Chord(Key.Enter) },
         { "\t", new Chord(Key.Tab) },
         { "\b", new Chord(Key.Backspace) }
     };
@@ -98,15 +99,15 @@ internal abstract class Layout<TLayoutId> : ILayout
 
     protected abstract Dictionary<char, Chord> BuildDirectMap(TLayoutId layoutId);
 
-    public bool TryDirectMapping(char character, out TypingAction action)
+    public bool TryDirectMapping(string token, out TypingAction action)
     {
-        if (SpecialKeys.TryGetValue(character.ToString(), out var specialChord))
+        if (SpecialKeys.TryGetValue(token, out var specialChord))
         {
             action = specialChord;
             return true;
         }
 
-        if (GetDirectMap().TryGetValue(character, out var directMap))
+        if (token.Length == 1 && GetDirectMap().TryGetValue(token[0], out var directMap))
         {
             action = directMap;
             return true;
@@ -116,9 +117,9 @@ internal abstract class Layout<TLayoutId> : ILayout
         return false;
     }
 
-    public bool TryDeadMapping(char character, out TypingAction action)
+    public bool TryDeadMapping(string token, out TypingAction action)
     {
-        if (GetDeadMap().TryGetValue(character, out var deadMap))
+        if (token.Length == 1 && GetDeadMap().TryGetValue(token[0], out var deadMap))
         {
             action = deadMap;
             return true;
@@ -128,7 +129,7 @@ internal abstract class Layout<TLayoutId> : ILayout
         return false;
     }
 
-    public virtual bool TryComboMapping(char character, out TypingAction action)
+    public virtual bool TryComboMapping(string token, out TypingAction action)
     {
         action = null;
         return false;
