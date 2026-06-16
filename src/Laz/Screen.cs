@@ -91,7 +91,7 @@ public class Screen
     /// <exception cref="InvalidOperationException">Thrown if the capture fails, including when Screen Recording permission is not granted on macOS.</exception>
     public (byte R, byte G, byte B, byte A) GetColorAt(Point point)
     {
-        var color = Native.NativeLazbot.GetPixelColor(point.X, point.Y);
-        return (color.R, color.G, color.B, color.A);
+        var (data, _, _) = Capture(point, 1, 1);
+        return (R: data[2], G: data[1], B: data[0], A: data[3]);
     }
 }
