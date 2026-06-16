@@ -78,7 +78,7 @@ public static class TypingExtension
         return keyboard;
     }
 
-    private static IEnumerable<TypingAction> FindTypingActions(ILayout layout, string token,
+    internal static IEnumerable<TypingAction> FindTypingActions(ILayout layout, string token,
         bool clipboardFallback = false)
     {
         if (layout.TryDirectMapping(token, out var directChord))
