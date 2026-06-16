@@ -7,7 +7,7 @@
 #include <atomic>
 #include <cstring>
 #include <memory>
-#include "color.h"
+#include "laz_api.h"
 
 // Shared between the caller and the async block to coordinate timeout cancellation.
 struct CaptureState {
@@ -20,6 +20,9 @@ extern "C" {
 // Requires macOS 14.0+ and Screen Recording permission.
 bool captureScreen(int x, int y, int width, int height, void* buffer) {
   if (buffer == nullptr || width <= 0 || height <= 0) {
+    return false;
+  }
+  if (width > LAZ_MAX_CAPTURE_DIMENSION || height > LAZ_MAX_CAPTURE_DIMENSION) {
     return false;
   }
 
