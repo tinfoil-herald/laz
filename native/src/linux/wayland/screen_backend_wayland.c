@@ -124,8 +124,11 @@ LAZ_EXPORT bool lazScreenCapture(int x, int y, int width, int height, void *buff
     saveRestoreToken(session.restoreToken);
   }
 
+  int pipewireFd = session.pipewireFd;
+  session.pipewireFd = -1;  // ownership transfers to pipewireCaptureFrame
+
   CapturedFrame frame;
-  if (!pipewireCaptureFrame(session.pipewireFd, session.nodeId, &frame)) {
+  if (!pipewireCaptureFrame(pipewireFd, session.nodeId, &frame)) {
     portalCloseSession(&session);
     return false;
   }
@@ -151,8 +154,11 @@ LAZ_EXPORT NativeColor lazGetPixelColor(int x, int y) {
     saveRestoreToken(session.restoreToken);
   }
 
+  int pipewireFd = session.pipewireFd;
+  session.pipewireFd = -1;  // ownership transfers to pipewireCaptureFrame
+
   CapturedFrame frame;
-  if (!pipewireCaptureFrame(session.pipewireFd, session.nodeId, &frame)) {
+  if (!pipewireCaptureFrame(pipewireFd, session.nodeId, &frame)) {
     portalCloseSession(&session);
     return color;
   }
