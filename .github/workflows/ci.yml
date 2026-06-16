@@ -114,6 +114,7 @@ jobs:
       - name: Run unit tests
         run: >
           dotnet test src/Laz.Tests/Laz.Tests.csproj -c Release --no-build
+          --settings src/Laz.Tests/test.runsettings
           --collect:"XPlat Code Coverage" --results-directory coverage
 
       - name: Run UI tests
