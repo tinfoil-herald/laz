@@ -8,8 +8,8 @@
     <Authors>Vlad Lubenskyi</Authors>
     <Copyright>Copyright (c) Vladyslav Lubenskyi 2026</Copyright>
     <Description>Automate mouse movements, keyboard input, and screen capture across Windows, Linux, and macOS.</Description>
-    <PackageProjectUrl>https://github.com/vlad-lubenskyi/laz</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/vlad-lubenskyi/laz</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/tinfoil-herald/laz</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tinfoil-herald/laz</RepositoryUrl>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
