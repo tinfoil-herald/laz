@@ -4,11 +4,12 @@
 #include "xdisplay.h"
 
 #include <X11/Xlib.h>
+#include <pthread.h>
+#include <stdbool.h>
 #include <stdlib.h> /* For atexit() */
 
 static Display *g_mainDisplay = NULL;
-static int g_registered = 0;
-static int g_threadsInitialized = 0;
+static pthread_once_t g_initOnce = PTHREAD_ONCE_INIT;
 
 static void closeMainDisplay(void) {
   if (g_mainDisplay != NULL) {
@@ -17,20 +18,17 @@ static void closeMainDisplay(void) {
   }
 }
 
+static void initDisplay(void) {
+  XInitThreads();
+  g_mainDisplay = XOpenDisplay(NULL);
+  if (g_mainDisplay != NULL) {
+    atexit(&closeMainDisplay);
+  }
+}
+
 Display *getMainDisplay(void) {
-  if (!g_threadsInitialized) {
-    XInitThreads();
-    g_threadsInitialized = 1;
-  }
-
-  if (g_mainDisplay == NULL) {
-    g_mainDisplay = XOpenDisplay(NULL);
-
-    if (g_mainDisplay != NULL && !g_registered) {
-      atexit(&closeMainDisplay);
-      g_registered = 1;
-    }
-  }
-
+  pthread_once(&g_initOnce, initDisplay);
   return g_mainDisplay;
 }
+
+bool isX11InputAvailable(void) { return getMainDisplay() != NULL; }

@@ -5,6 +5,7 @@
 #define XDISPLAY_H
 
 #include <X11/Xlib.h>
+#include <stdbool.h>
 
 /**
  * Returns the shared X11 Display connection.
@@ -14,5 +15,12 @@
  * @return The Display connection, or NULL if it could not be opened.
  */
 Display *getMainDisplay(void);
+
+/**
+ * Returns true if an X11 display is available for input injection.
+ *
+ * Returns false in pure Wayland sessions where DISPLAY is not set.
+ */
+bool isX11InputAvailable(void);
 
 #endif  // XDISPLAY_H
