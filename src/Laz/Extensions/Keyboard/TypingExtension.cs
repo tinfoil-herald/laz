@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace Laz.Extensions.Keyboard;
@@ -59,9 +60,11 @@ public static class TypingExtension
             return keyboard;
 
         var layout = ILayout.Create();
-        foreach (var character in text)
+        var enumerator = StringInfo.GetTextElementEnumerator(text);
+        while (enumerator.MoveNext())
         {
-            var actions = FindTypingActions(layout, character, clipboardFallback);
+            var element = enumerator.GetTextElement();
+            var actions = FindTypingActions(layout, element, clipboardFallback);
             var context = new TypingContext(keyboard, useCtrlInsert);
             foreach (var action in actions)
             {
@@ -75,22 +78,22 @@ public static class TypingExtension
         return keyboard;
     }
 
-    private static IEnumerable<TypingAction> FindTypingActions(ILayout layout, char character,
+    private static IEnumerable<TypingAction> FindTypingActions(ILayout layout, string token,
         bool clipboardFallback = false)
     {
-        if (layout.TryDirectMapping(character, out var directChord))
+        if (layout.TryDirectMapping(token, out var directChord))
         {
             yield return directChord;
             yield break;
         }
 
-        if (layout.TryDeadMapping(character, out var deadChord))
+        if (layout.TryDeadMapping(token, out var deadChord))
         {
             yield return deadChord;
             yield break;
         }
 
-        if (layout.TryComboMapping(character, out var comboChord))
+        if (layout.TryComboMapping(token, out var comboChord))
         {
             yield return comboChord;
             yield break;
@@ -98,10 +101,10 @@ public static class TypingExtension
 
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && clipboardFallback)
         {
-            yield return new ClipboardPaste(character);
+            yield return new ClipboardPaste(token);
             yield break;
         }
 
-        throw new ArgumentException($"The `{character}` character can't be typed.");
+        throw new ArgumentException($"The `{token}` character can't be typed.");
     }
 }

@@ -122,9 +122,9 @@ internal sealed class ClipboardPaste : TypingAction
 {
     private string Text { get; }
 
-    public ClipboardPaste(char c)
+    public ClipboardPaste(string text)
     {
-        Text = c.ToString();
+        Text = text;
     }
 
     public override void Execute(TypingContext context)
