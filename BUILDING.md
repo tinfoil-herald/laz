@@ -121,7 +121,17 @@ dotnet build src/Laz/Laz.csproj -c Release
 
 Output: `src/Laz/bin/Release/net6.0/Laz.dll`
 
-## 4. Verify build
+## 4. Build NuGet package
+
+After building all supported native runtime assets, create the package explicitly:
+
+```bash
+dotnet pack src/Laz/Laz.csproj -c Release
+```
+
+Packing fails if any supported native runtime asset is missing from `runtimes/`.
+
+## 5. Verify build
 
 Run tests to confirm everything works:
 
