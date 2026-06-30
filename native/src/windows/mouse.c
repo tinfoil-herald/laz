@@ -23,8 +23,8 @@ static void doMouseMove(int x, int y) {
   input.mi.dx = screenWidth > 1 ? (LONG)MulDiv(relX, 65535, screenWidth - 1) : 0;
   input.mi.dy = screenHeight > 1 ? (LONG)MulDiv(relY, 65535, screenHeight - 1) : 0;
 
-  POINT before;
-  GetCursorPos(&before);
+  POINT before = {0};
+  BOOL haveBefore = GetCursorPos(&before);
 
   UINT sent = SendInput(1, &input, sizeof(input));
   if (sent != 1) {
@@ -37,7 +37,7 @@ static void doMouseMove(int x, int y) {
   // pixel with SetCursorPos (no normalization involved) when that happens.
   POINT actual;
   for (int i = 0; i < 3; i++) {
-    if (GetCursorPos(&actual) && (actual.x != before.x || actual.y != before.y)) {
+    if (GetCursorPos(&actual) && (!haveBefore || actual.x != before.x || actual.y != before.y)) {
       break;
     }
     Sleep(0);
