@@ -13,17 +13,25 @@ static void doMouseMove(int x, int y) {
   input.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE | MOUSEEVENTF_VIRTUALDESK;
 
   // Adjust coordinates relative to the virtual screen origin (can be negative with multi-monitor).
-  x -= GetSystemMetrics(SM_XVIRTUALSCREEN);
-  y -= GetSystemMetrics(SM_YVIRTUALSCREEN);
+  int relX = x - GetSystemMetrics(SM_XVIRTUALSCREEN);
+  int relY = y - GetSystemMetrics(SM_YVIRTUALSCREEN);
 
   int screenWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
   int screenHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
-  // Normalize pixel coordinates to the 0..65535 absolute range.ß
-  input.mi.dx = screenWidth > 1 ? (LONG)(x * 65535LL / (screenWidth - 1)) : 0;
-  input.mi.dy = screenHeight > 1 ? (LONG)(y * 65535LL / (screenHeight - 1)) : 0;
+  // Normalize pixel coordinates to the 0..65535 absolute range.
+  input.mi.dx = screenWidth > 1 ? (LONG)(relX * 65535LL / (screenWidth - 1)) : 0;
+  input.mi.dy = screenHeight > 1 ? (LONG)(relY * 65535LL / (screenHeight - 1)) : 0;
 
   SendInput(1, &input, sizeof(input));
+
+  // The 0..65535 normalization above is lossy: Windows rescales it back to pixels using its own
+  // internal fixed-point math, which can land 1px off from the requested target. Snap to the exact
+  // pixel with SetCursorPos (no normalization involved) when that happens.
+  POINT actual;
+  if (GetCursorPos(&actual) && (actual.x != x || actual.y != y)) {
+    SetCursorPos(x, y);
+  }
 }
 
 static void doMouseButton(MouseButton button, bool isDown) {
