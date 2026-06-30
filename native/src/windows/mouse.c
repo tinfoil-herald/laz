@@ -20,15 +20,28 @@ static void doMouseMove(int x, int y) {
   int screenHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
   // Normalize pixel coordinates to the 0..65535 absolute range.
-  input.mi.dx = screenWidth > 1 ? (LONG)(relX * 65535LL / (screenWidth - 1)) : 0;
-  input.mi.dy = screenHeight > 1 ? (LONG)(relY * 65535LL / (screenHeight - 1)) : 0;
+  input.mi.dx = screenWidth > 1 ? (LONG)MulDiv(relX, 65535, screenWidth - 1) : 0;
+  input.mi.dy = screenHeight > 1 ? (LONG)MulDiv(relY, 65535, screenHeight - 1) : 0;
 
-  SendInput(1, &input, sizeof(input));
+  POINT before;
+  GetCursorPos(&before);
+
+  UINT sent = SendInput(1, &input, sizeof(input));
+  if (sent != 1) {
+    SetCursorPos(x, y);
+    return;
+  }
 
   // The 0..65535 normalization above is lossy: Windows rescales it back to pixels using its own
   // internal fixed-point math, which can land 1px off from the requested target. Snap to the exact
   // pixel with SetCursorPos (no normalization involved) when that happens.
   POINT actual;
+  for (int i = 0; i < 3; i++) {
+    if (GetCursorPos(&actual) && (actual.x != before.x || actual.y != before.y)) {
+      break;
+    }
+    Sleep(0);
+  }
   if (GetCursorPos(&actual) && (actual.x != x || actual.y != y)) {
     SetCursorPos(x, y);
   }
