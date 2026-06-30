@@ -20,8 +20,21 @@ static void doMouseMove(int x, int y) {
   int screenHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
   // Normalize pixel coordinates to the 0..65535 absolute range.
-  input.mi.dx = screenWidth > 1 ? (LONG)MulDiv(relX, 65535, screenWidth - 1) : 0;
-  input.mi.dy = screenHeight > 1 ? (LONG)MulDiv(relY, 65535, screenHeight - 1) : 0;
+  if (screenWidth > 1) {
+    if (relX < 0) relX = 0;
+    if (relX > screenWidth - 1) relX = screenWidth - 1;
+    input.mi.dx = (LONG)MulDiv(relX, 65535, screenWidth - 1);
+  } else {
+    input.mi.dx = 0;
+  }
+
+  if (screenHeight > 1) {
+    if (relY < 0) relY = 0;
+    if (relY > screenHeight - 1) relY = screenHeight - 1;
+    input.mi.dy = (LONG)MulDiv(relY, 65535, screenHeight - 1);
+  } else {
+    input.mi.dy = 0;
+  }
 
   POINT before = {0};
   BOOL haveBefore = GetCursorPos(&before);
