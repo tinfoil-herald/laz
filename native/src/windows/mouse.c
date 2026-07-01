@@ -19,9 +19,8 @@ static void doMouseMove(int x, int y) {
   int screenWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
   int screenHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
-  // Normalize pixel coordinates to the 0..65535 absolute range.ß
-  input.mi.dx = screenWidth > 1 ? (LONG)(x * 65535LL / (screenWidth - 1)) : 0;
-  input.mi.dy = screenHeight > 1 ? (LONG)(y * 65535LL / (screenHeight - 1)) : 0;
+  input.mi.dx = (x * 65536 + screenWidth - 1) / screenWidth;
+  input.mi.dy = (y * 65536 + screenHeight - 1) / screenHeight;
 
   SendInput(1, &input, sizeof(input));
 }
