@@ -13,14 +13,14 @@ static void doMouseMove(int x, int y) {
   input.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE | MOUSEEVENTF_VIRTUALDESK;
 
   // Adjust coordinates relative to the virtual screen origin (can be negative with multi-monitor).
-  int relX = x - GetSystemMetrics(SM_XVIRTUALSCREEN);
-  int relY = y - GetSystemMetrics(SM_YVIRTUALSCREEN);
+  x -= GetSystemMetrics(SM_XVIRTUALSCREEN);
+  y -= GetSystemMetrics(SM_YVIRTUALSCREEN);
 
   int screenWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
   int screenHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
-  input.mi.dx = (relX * 65536 + screenWidth - 1) / screenWidth;
-  input.mi.dy = (relY * 65536 + screenHeight - 1) / screenHeight;
+  input.mi.dx = (x * 65536 + screenWidth - 1) / screenWidth;
+  input.mi.dy = (y * 65536 + screenHeight - 1) / screenHeight;
 
   SendInput(1, &input, sizeof(input));
 }
