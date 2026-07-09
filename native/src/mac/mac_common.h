@@ -10,9 +10,32 @@
 // Reference: https://bugs.openjdk.org/browse/JDK-8242174
 static const double EVENT_DELAY_SECONDS = 0.050;
 
+// Upper bound to wait for a posted key/button event to be reflected in the
+// system input state before giving up and proceeding anyway. In practice
+// confirmation succeeds within the first few poll iterations; this is only a
+// safety cap so a call can never hang.
+static const double EVENT_CONFIRM_TIMEOUT_SECONDS = 0.100;
+
+// Upper bound to wait for the cursor to reach a requested position. Kept short
+// because a reachable, on-screen target is confirmed almost immediately and we
+// don't want to stall dense movement paths on an unreachable (clamped) target.
+static const double MOVE_CONFIRM_TIMEOUT_SECONDS = 0.050;
+
 // Execute block on main thread synchronously.
 // CG event APIs must be called from the main thread for reliable behavior.
 void performOnMainThread(void (^block)(void));
+
+// Polls `condition` on the calling thread until it returns true or
+// `timeoutSeconds` elapses. Returns true if the condition became true, false on
+// timeout.
+//
+// CGEventPost is asynchronous: the window server processes injected events on
+// its own schedule, so a call can return before the event has taken effect.
+// After posting, we wait until the resulting system state (key/button/cursor)
+// reflects the change, which makes consecutive commands execute in order (e.g.
+// the modifiers of a key combination, or a click that must land only after a
+// preceding move has completed).
+bool waitUntil(bool (^condition)(void), double timeoutSeconds);
 
 // Ensures minimum delay between synthetic input events.
 //

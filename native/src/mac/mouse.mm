@@ -144,6 +144,18 @@ static CGEventType getDragEventType(MouseButton button) {
   }
 }
 
+// Reads the current cursor location. Safe to call from any thread; used both to
+// report the position and to confirm that a requested move has completed.
+static CGPoint currentCursorLocation() {
+  CGPoint location = CGPointZero;
+  CGEventRef event = CGEventCreate(nullptr);
+  if (event != nullptr) {
+    location = CGEventGetLocation(event);
+    CFRelease(event);
+  }
+  return location;
+}
+
 extern "C" {
 void sendMouseDown(int x, int y, MouseButton button) {
   autoDelay();
@@ -166,6 +178,12 @@ void sendMouseDown(int x, int y, MouseButton button) {
       CFRelease(event);
     }
   });
+
+  // Wait until the button is reported as pressed so the next command runs only
+  // after this press has been processed.
+  waitUntil(^bool {
+    return CGEventSourceButtonState(kCGEventSourceStateHIDSystemState, cgButton);
+  }, EVENT_CONFIRM_TIMEOUT_SECONDS);
 }
 
 void sendMouseUp(int x, int y, MouseButton button) {
@@ -189,6 +207,11 @@ void sendMouseUp(int x, int y, MouseButton button) {
       CFRelease(event);
     }
   });
+
+  // Wait until the button is reported as released before returning.
+  waitUntil(^bool {
+    return !CGEventSourceButtonState(kCGEventSourceStateHIDSystemState, cgButton);
+  }, EVENT_CONFIRM_TIMEOUT_SECONDS);
 }
 
 void sendMouseMove(int x, int y, MouseButton pressedButton, bool isButtonDown) {
@@ -211,18 +234,23 @@ void sendMouseMove(int x, int y, MouseButton pressedButton, bool isButtonDown) {
       CFRelease(event);
     }
   });
+
+  // Wait until the cursor actually reaches the target. This is what makes a
+  // following command reliable, e.g. mouse.JumpTo(p).Click(): the click reads
+  // the current position, so the move must complete first. Uses a short timeout
+  // so an unreachable (off-screen, clamped) target doesn't stall movement.
+  waitUntil(^bool {
+    CGPoint location = currentCursorLocation();
+    return std::llround(location.x) == x && std::llround(location.y) == y;
+  }, MOVE_CONFIRM_TIMEOUT_SECONDS);
 }
 
 NativePoint getMousePosition() {
   __block NativePoint result = {0, 0};
   performOnMainThread(^{
-    CGEventRef event = CGEventCreate(nullptr);
-    if (event != nullptr) {
-      CGPoint loc = CGEventGetLocation(event);
-      result.x = (int)loc.x;
-      result.y = (int)loc.y;
-      CFRelease(event);
-    }
+    CGPoint loc = currentCursorLocation();
+    result.x = (int)loc.x;
+    result.y = (int)loc.y;
   });
   return result;
 }

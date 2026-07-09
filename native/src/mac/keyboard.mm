@@ -33,17 +33,34 @@ void sendKeyPress(VirtualKeyCode keyCode) {
   autoDelay();
 
   int macKeyCode = getMacKeyCode(keyCode);
-  if (macKeyCode != kVK_Undefined) {
-    postKeyEvent((CGKeyCode)macKeyCode, true);
+  if (macKeyCode == kVK_Undefined) {
+    return;
   }
+
+  postKeyEvent((CGKeyCode)macKeyCode, true);
+
+  // CGEventPost is asynchronous. Wait until the system reports the key as down
+  // before returning so that key combinations (e.g. Ctrl+Alt+H) are applied in
+  // the order they were requested.
+  waitUntil(^bool {
+    return CGEventSourceKeyState(kCGEventSourceStateHIDSystemState, (CGKeyCode)macKeyCode);
+  }, EVENT_CONFIRM_TIMEOUT_SECONDS);
 }
 
 void sendKeyRelease(VirtualKeyCode keyCode) {
   autoDelay();
 
   int macKeyCode = getMacKeyCode(keyCode);
-  if (macKeyCode != kVK_Undefined) {
-    postKeyEvent((CGKeyCode)macKeyCode, false);
+  if (macKeyCode == kVK_Undefined) {
+    return;
   }
+
+  postKeyEvent((CGKeyCode)macKeyCode, false);
+
+  // Wait until the system reports the key as up so a subsequent command isn't
+  // issued while this key is still considered pressed.
+  waitUntil(^bool {
+    return !CGEventSourceKeyState(kCGEventSourceStateHIDSystemState, (CGKeyCode)macKeyCode);
+  }, EVENT_CONFIRM_TIMEOUT_SECONDS);
 }
 }
