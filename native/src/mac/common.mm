@@ -22,13 +22,13 @@ bool waitUntil(bool (^condition)(void), double timeoutSeconds) {
   // within the first few iterations.
   static const NSTimeInterval kPollInterval = 0.0005;  // 0.5 ms
 
-NSTimeInterval deadline = [NSDate timeIntervalSinceReferenceDate] + timeoutSeconds;
-while (!condition()) {
-  if ([NSDate timeIntervalSinceReferenceDate] >= deadline) {
-    return false;
-  }
-  [NSThread sleepForTimeInterval:kPollInterval];
-}
+   NSTimeInterval deadline = [NSDate timeIntervalSinceReferenceDate] + timeoutSeconds;
+   while (!condition()) {
+     if ([NSDate timeIntervalSinceReferenceDate] >= deadline) {
+       return false;
+     }
+     [NSThread sleepForTimeInterval:kPollInterval];
+   }
   return true;
 }
 

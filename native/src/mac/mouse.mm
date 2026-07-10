@@ -249,11 +249,9 @@ void sendMouseMove(int x, int y, MouseButton pressedButton, bool isButtonDown) {
 
 NativePoint getMousePosition() {
   __block NativePoint result = {0, 0};
-  performOnMainThread(^{
-    CGPoint loc = currentCursorLocation();
-    result.x = (int)loc.x;
-    result.y = (int)loc.y;
-  });
+  CGPoint loc = currentCursorLocation();
+  result.x = (int)loc.x;
+  result.y = (int)loc.y;
   return result;
 }
 
