@@ -149,8 +149,11 @@ static CGEventType getDragEventType(MouseButton button) {
 static CGPoint currentCursorLocation() {
   __block CGPoint location = CGPointZero;
   performOnMainThread(^{
-    NSPoint point = [NSEvent mouseLocation];
-    location = CGPointMake(point.x, point.y);
+    CGEventRef event = CGEventCreate(nullptr);
+    if (event != nullptr) {
+      location = CGEventGetLocation(event);
+      CFRelease(event);
+    }
   });
   return location;
 }

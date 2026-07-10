@@ -19,12 +19,17 @@ void performOnMainThread(void (^block)(void)) {
 
 bool waitUntilWithPollInterval(bool (^condition)(void), double timeoutSeconds,
                                double pollIntervalSeconds) {
-  NSTimeInterval deadline = [NSDate timeIntervalSinceReferenceDate] + timeoutSeconds;
+  static const NSTimeInterval kMinPollInterval = 0.0005;  // 0.5 ms
+  NSTimeInterval pollInterval = pollIntervalSeconds > 0 ? pollIntervalSeconds : kMinPollInterval;
+
+  const NSTimeInterval deadline = [NSDate timeIntervalSinceReferenceDate] + timeoutSeconds;
   while (!condition()) {
-    if ([NSDate timeIntervalSinceReferenceDate] >= deadline) {
+    const NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+    const NSTimeInterval remaining = deadline - now;
+    if (remaining <= 0) {
       return false;
     }
-    [NSThread sleepForTimeInterval:pollIntervalSeconds];
+    [NSThread sleepForTimeInterval:MIN(pollInterval, remaining)];
   }
   return true;
 }
