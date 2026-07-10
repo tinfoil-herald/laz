@@ -21,9 +21,19 @@ static const double EVENT_CONFIRM_TIMEOUT_SECONDS = 0.100;
 // don't want to stall dense movement paths on an unreachable (clamped) target.
 static const double MOVE_CONFIRM_TIMEOUT_SECONDS = 0.050;
 
+// Poll interval for move confirmation checks. This is intentionally looser than
+// key/button confirmation polling because move sequences can be dense and the
+// window server updates cursor position asynchronously.
+static const double MOVE_CONFIRM_POLL_INTERVAL_SECONDS = 0.002;  // 2 ms
+
 // Execute block on main thread synchronously.
 // CG event APIs must be called from the main thread for reliable behavior.
 void performOnMainThread(void (^block)(void));
+
+// Polls `condition` on the calling thread until it returns true or
+// `timeoutSeconds` elapses. Uses `pollIntervalSeconds` between checks.
+bool waitUntilWithPollInterval(bool (^condition)(void), double timeoutSeconds,
+                               double pollIntervalSeconds);
 
 // Polls `condition` on the calling thread until it returns true or
 // `timeoutSeconds` elapses. Returns true if the condition became true, false on

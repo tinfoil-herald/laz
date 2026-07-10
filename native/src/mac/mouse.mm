@@ -144,16 +144,13 @@ static CGEventType getDragEventType(MouseButton button) {
   }
 }
 
-// Reads the current cursor location. Safe to call from any thread; used both to
-// report the position and to confirm that a requested move has completed.
+// Reads the current cursor location. AppKit event APIs are main-thread bound,
+// so this helper synchronizes to the main thread before querying.
 static CGPoint currentCursorLocation() {
   __block CGPoint location = CGPointZero;
   performOnMainThread(^{
-    CGEventRef event = CGEventCreate(nullptr);
-    if (event != nullptr) {
-      location = CGEventGetLocation(event);
-      CFRelease(event);
-    }
+    NSPoint point = [NSEvent mouseLocation];
+    location = CGPointMake(point.x, point.y);
   });
   return location;
 }
@@ -241,14 +238,14 @@ void sendMouseMove(int x, int y, MouseButton pressedButton, bool isButtonDown) {
   // following command reliable, e.g. mouse.JumpTo(p).Click(): the click reads
   // the current position, so the move must complete first. Uses a short timeout
   // so an unreachable (off-screen, clamped) target doesn't stall movement.
-  waitUntil(^bool {
+  waitUntilWithPollInterval(^bool {
     CGPoint location = currentCursorLocation();
     return std::llround(location.x) == x && std::llround(location.y) == y;
-  }, MOVE_CONFIRM_TIMEOUT_SECONDS);
+  }, MOVE_CONFIRM_TIMEOUT_SECONDS, MOVE_CONFIRM_POLL_INTERVAL_SECONDS);
 }
 
 NativePoint getMousePosition() {
-  __block NativePoint result = {0, 0};
+  NativePoint result = {0, 0};
   CGPoint loc = currentCursorLocation();
   result.x = (int)loc.x;
   result.y = (int)loc.y;

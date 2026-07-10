@@ -17,19 +17,23 @@ void performOnMainThread(void (^block)(void)) {
   }
 }
 
-bool waitUntil(bool (^condition)(void), double timeoutSeconds) {
-  // Short poll interval keeps latency low while confirmation typically succeeds
-  // within the first few iterations.
-  static const NSTimeInterval kPollInterval = 0.0005;  // 0.5 ms
-
+bool waitUntilWithPollInterval(bool (^condition)(void), double timeoutSeconds,
+                               double pollIntervalSeconds) {
   NSTimeInterval deadline = [NSDate timeIntervalSinceReferenceDate] + timeoutSeconds;
   while (!condition()) {
     if ([NSDate timeIntervalSinceReferenceDate] >= deadline) {
       return false;
     }
-    [NSThread sleepForTimeInterval:kPollInterval];
+    [NSThread sleepForTimeInterval:pollIntervalSeconds];
   }
   return true;
+}
+
+bool waitUntil(bool (^condition)(void), double timeoutSeconds) {
+  // Short poll interval keeps latency low while confirmation typically succeeds
+  // within the first few iterations.
+  static const NSTimeInterval kDefaultPollInterval = 0.0005;  // 0.5 ms
+  return waitUntilWithPollInterval(condition, timeoutSeconds, kDefaultPollInterval);
 }
 
 void autoDelay() {
