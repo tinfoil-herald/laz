@@ -147,12 +147,14 @@ static CGEventType getDragEventType(MouseButton button) {
 // Reads the current cursor location. Safe to call from any thread; used both to
 // report the position and to confirm that a requested move has completed.
 static CGPoint currentCursorLocation() {
-  CGPoint location = CGPointZero;
-  CGEventRef event = CGEventCreate(nullptr);
-  if (event != nullptr) {
-    location = CGEventGetLocation(event);
-    CFRelease(event);
-  }
+  __block CGPoint location = CGPointZero;
+  performOnMainThread(^{
+    CGEventRef event = CGEventCreate(nullptr);
+    if (event != nullptr) {
+      location = CGEventGetLocation(event);
+      CFRelease(event);
+    }
+  });
   return location;
 }
 
