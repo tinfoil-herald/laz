@@ -158,12 +158,16 @@ void sendMouseDown(int x, int y, MouseButton button) {
     g_buttonEventNumbers[buttonIndex] = g_nextEventNumber++;
     int eventNumber = g_buttonEventNumbers[buttonIndex];
 
-    CGEventRef event = CGEventCreateMouseEvent(nullptr, eventType, point, cgButton);
+    CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+    CGEventRef event = CGEventCreateMouseEvent(source, eventType, point, cgButton);
     if (event != nullptr) {
       CGEventSetIntegerValueField(event, kCGMouseEventClickState, eventClickCount);
       CGEventSetIntegerValueField(event, kCGMouseEventNumber, eventNumber);
       CGEventPost(kCGHIDEventTap, event);
       CFRelease(event);
+    }
+    if (source != nullptr) {
+      CFRelease(source);
     }
   });
 }
@@ -181,18 +185,23 @@ void sendMouseUp(int x, int y, MouseButton button) {
     int eventClickCount = getClickCount(false);
     int eventNumber = g_buttonEventNumbers[buttonIndex];
 
-    CGEventRef event = CGEventCreateMouseEvent(nullptr, eventType, point, cgButton);
+    CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+    CGEventRef event = CGEventCreateMouseEvent(source, eventType, point, cgButton);
     if (event != nullptr) {
       CGEventSetIntegerValueField(event, kCGMouseEventClickState, eventClickCount);
       CGEventSetIntegerValueField(event, kCGMouseEventNumber, eventNumber);
       CGEventPost(kCGHIDEventTap, event);
       CFRelease(event);
     }
+    if (source != nullptr) {
+      CFRelease(source);
+    }
   });
 }
 
 void sendMouseMove(int x, int y, MouseButton pressedButton, bool isButtonDown) {
-  // Don't apply auto-delay for mouse moves (losing some move events is acceptable)
+  // Update auto-delay timer for moves (skip sleep, but next click must wait 50ms after last move)
+  autoDelay(true);
 
   CGPoint point = CGPointMake(x, y);
   CGMouseButton cgButton = getCGButton(pressedButton);
@@ -202,13 +211,17 @@ void sendMouseMove(int x, int y, MouseButton pressedButton, bool isButtonDown) {
     // Mouse movement resets click count (double-clicks happen at same location).
     g_lastClickTime = 0;
 
-    CGEventRef event = CGEventCreateMouseEvent(nullptr, eventType, point, cgButton);
+    CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+    CGEventRef event = CGEventCreateMouseEvent(source, eventType, point, cgButton);
     if (event != nullptr) {
       // Click count is 0 for move/drag events.
       CGEventSetIntegerValueField(event, kCGMouseEventClickState, 0);
       CGEventSetIntegerValueField(event, kCGMouseEventNumber, g_nextEventNumber);
       CGEventPost(kCGHIDEventTap, event);
       CFRelease(event);
+    }
+    if (source != nullptr) {
+      CFRelease(source);
     }
   });
 }
@@ -239,10 +252,14 @@ void sendScrollEvent(int notches) {
   // Uses NULL source for isolated events that don't blend with physical input state.
   // kCGScrollEventUnitLine scrolls by logical lines (like mouse wheel), not pixels.
   performOnMainThread(^{
-    CGEventRef event = CGEventCreateScrollWheelEvent(nullptr, kCGScrollEventUnitLine, 1, lines);
+    CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+    CGEventRef event = CGEventCreateScrollWheelEvent(source, kCGScrollEventUnitLine, 1, lines);
     if (event != nullptr) {
       CGEventPost(kCGHIDEventTap, event);
       CFRelease(event);
+    }
+    if (source != nullptr) {
+      CFRelease(source);
     }
   });
 }

@@ -17,11 +17,13 @@ void performOnMainThread(void (^block)(void)) {
   }
 }
 
-void autoDelay() {
+void autoDelay(bool isMove) {
   NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate];
-  NSTimeInterval delay = g_nextEventTime - now;
-  if (delay > 0) {
-    [NSThread sleepForTimeInterval:delay];
+  if (!isMove) {
+    NSTimeInterval delay = g_nextEventTime - now;
+    if (delay > 0) {
+      [NSThread sleepForTimeInterval:delay];
+    }
   }
   g_nextEventTime = now + EVENT_DELAY_SECONDS;
 }
