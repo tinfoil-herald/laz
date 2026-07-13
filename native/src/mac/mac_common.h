@@ -28,6 +28,6 @@ void performOnMainThread(void (^block)(void));
 // processed in order.
 //
 // Windows does not need this because SendInput is synchronous.
-void autoDelay(void);
+void autoDelay(bool isMove = false);
 
 #endif  // MAC_COMMON_H

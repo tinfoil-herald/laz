@@ -200,7 +200,8 @@ void sendMouseUp(int x, int y, MouseButton button) {
 }
 
 void sendMouseMove(int x, int y, MouseButton pressedButton, bool isButtonDown) {
-  // Don't apply auto-delay for mouse moves (losing some move events is acceptable)
+  // Update auto-delay timer for moves (skip sleep, but next click must wait 50ms after last move)
+  autoDelay(true);
 
   CGPoint point = CGPointMake(x, y);
   CGMouseButton cgButton = getCGButton(pressedButton);
