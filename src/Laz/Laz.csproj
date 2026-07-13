@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <PackageId>Laz</PackageId>
-    <Version>0.695.2222222222222222222222</Version>
+    <Version>0.695.2</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Vlad Lubenskyi</Authors>
