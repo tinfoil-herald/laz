@@ -284,15 +284,16 @@ static void cleanupCaptureApp(CaptureApp *app) {
   }
   if (app->loop) pw_thread_loop_unlock(app->loop);
 
+  // No callbacks can run after the loop thread is stopped.
+  if (app->loop) {
+    pw_thread_loop_stop(app->loop);
+  }
+
   free(app->target_object);
   app->target_object = NULL;
 
   free(app->bgrx_buf);
   app->bgrx_buf = NULL;
-
-  if (app->loop) {
-    pw_thread_loop_stop(app->loop);
-  }
 
   if (app->context) {
     pw_context_destroy(app->context);
@@ -418,8 +419,7 @@ bool pipewireCaptureFrame(int pipewireFd, uint32_t nodeId, CapturedFrame *outFra
     }
   }
 
-  pw_thread_loop_unlock(app.loop);
-
+  // Take the frame while still holding the lock so callbacks cannot modify it.
   bool success = false;
   if (app.frame_captured && !app.has_failed) {
     outFrame->data = app.bgrx_buf;
@@ -430,6 +430,7 @@ bool pipewireCaptureFrame(int pipewireFd, uint32_t nodeId, CapturedFrame *outFra
     success = true;
   }
 
+  pw_thread_loop_unlock(app.loop);
   cleanupCaptureApp(&app);
 
   return success;
