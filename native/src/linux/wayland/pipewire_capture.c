@@ -286,7 +286,9 @@ static void cleanupCaptureApp(CaptureApp *app) {
   app->bgrx_buf = NULL;
 
   if (app->core) {
+    pw_thread_loop_lock(app->loop);
     pw_core_disconnect(app->core);
+    pw_thread_loop_unlock(app->loop);
     app->core = NULL;
   }
 
