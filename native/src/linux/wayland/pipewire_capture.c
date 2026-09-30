@@ -271,26 +271,24 @@ static const struct pw_stream_events g_streamEvents = {
 // Releases all resources owned by a CaptureApp. Must be called with the loop unlocked.
 // Nulls out freed/destroyed fields so the function is safe to call on partially-initialized state.
 static void cleanupCaptureApp(CaptureApp *app) {
+  // Tear down PipeWire objects under the lock while the loop thread is still running.
+  if (app->loop) pw_thread_loop_lock(app->loop);
   if (app->stream) {
-    pw_thread_loop_lock(app->loop);
     pw_stream_disconnect(app->stream);
     pw_stream_destroy(app->stream);
-    pw_thread_loop_unlock(app->loop);
     app->stream = NULL;
   }
+  if (app->core) {
+    pw_core_disconnect(app->core);
+    app->core = NULL;
+  }
+  if (app->loop) pw_thread_loop_unlock(app->loop);
 
   free(app->target_object);
   app->target_object = NULL;
 
   free(app->bgrx_buf);
   app->bgrx_buf = NULL;
-
-  if (app->core) {
-    pw_thread_loop_lock(app->loop);
-    pw_core_disconnect(app->core);
-    pw_thread_loop_unlock(app->loop);
-    app->core = NULL;
-  }
 
   if (app->loop) {
     pw_thread_loop_stop(app->loop);
