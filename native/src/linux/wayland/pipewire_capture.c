@@ -278,6 +278,12 @@ static void cleanupCaptureApp(CaptureApp *app) {
     pw_stream_destroy(app->stream);
     app->stream = NULL;
   }
+  if (app->registry) {
+    // pw_core_disconnect() does not free proxies owned by the caller.
+    spa_hook_remove(&app->registry_listener);
+    pw_proxy_destroy((struct pw_proxy *)app->registry);
+    app->registry = NULL;
+  }
   if (app->core) {
     pw_core_disconnect(app->core);
     app->core = NULL;
