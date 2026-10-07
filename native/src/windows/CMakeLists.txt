@@ -7,6 +7,7 @@ add_library(Laz MODULE
     keyboard.c
     screen.c
     clipboard.c
+    a11y.c
 )
 
 target_include_directories(Laz PRIVATE
@@ -26,10 +27,12 @@ set_target_properties(Laz PROPERTIES
     CXX_STANDARD 14
 )
 
-# No explicit system library linking needed: MSVC implicitly links kernel32, user32,
-# gdi32, etc. which provide SendInput, GetDC, BitBlt, and other Win32 APIs used here.
+# MSVC implicitly links kernel32, user32, gdi32, etc. which provide SendInput, GetDC, BitBlt,
+# and other Win32 APIs used here. UI Automation needs COM and BSTR/VARIANT support.
 target_link_libraries(Laz PRIVATE
     LazHeaders
+    ole32
+    oleaut32
 )
 
 # Create output directory

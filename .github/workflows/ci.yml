@@ -35,6 +35,15 @@ jobs:
           dotnet test src/Laz.Tests/Laz.Tests.csproj -c Release --no-build
           --collect:"XPlat Code Coverage" --results-directory coverage
 
+      # Exercises the UI Automation backend against real Avalonia windows.
+      # Non-blocking until it proves stable on hosted runners.
+      - name: Run accessibility UI tests
+        continue-on-error: true
+        run: >
+          dotnet test src/Laz.Tests.UI/Laz.Tests.UI.csproj -c Release --no-build
+          --filter "Category=Accessibility"
+          --collect:"XPlat Code Coverage" --results-directory coverage
+
       - name: Upload coverage
         uses: codecov/codecov-action@v7
         with:

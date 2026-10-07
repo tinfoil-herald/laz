@@ -7,11 +7,10 @@
 #include <stdbool.h>
 
 #include "color.h"
+#include "laz_export.h"
 
 #define LAZ_SCREEN_BACKEND_CAPTURE_SYMBOL "lazScreenCapture"
 #define LAZ_SCREEN_BACKEND_PIXEL_SYMBOL "lazGetPixelColor"
-
-#define LAZ_EXPORT __attribute__((visibility("default")))
 
 typedef bool (*LazCaptureFn)(int x, int y, int width, int height, void* buffer);
 typedef NativeColor (*LazGetPixelFn)(int x, int y);

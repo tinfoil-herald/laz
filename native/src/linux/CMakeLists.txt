@@ -21,6 +21,8 @@ add_library(Laz MODULE
     layout.c
     xdisplay.c
     screen.c
+    # TODO: replace with the AT-SPI loader (a11y.c + laz_a11y_atspi.so).
+    ../common/a11y_unavailable.c
 )
 
 target_include_directories(Laz PRIVATE

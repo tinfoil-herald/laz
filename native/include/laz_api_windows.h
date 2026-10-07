@@ -9,11 +9,10 @@
 #include "point.h"
 #include "mouse_button.h"
 #include "key_code.h"
+#include "laz_export.h"
+#include "laz_a11y.h"
 
-#ifdef _WIN32
-    #define LAZ_EXPORT __declspec(dllexport)
-    #define LAZ_CALL __stdcall
-#else
+#ifndef _WIN32
     #error "laz_api_windows.h included on a non-Windows platform"
 #endif
 

@@ -233,6 +233,53 @@ var (r, g, b, _) = laz.Screen.GetColorAt(new (100, 200));
 bool isRed = r > 200 && g < 50 && b < 50;
 ```
 
+---
+
+### Accessibility
+
+> [!NOTE]
+> Accessibility support is currently available on Windows (UI Automation). On macOS and Linux, `IsAvailable()`
+> returns `false` and other methods throw `PlatformNotSupportedException` until the AXUIElement and AT-SPI backends
+> land.
+
+The `Accessibility` API reads the accessibility tree: windows, controls, their names, values, states, and bounds.
+It is read-only. Bounds use the same coordinate space as `Mouse`, so you can find a control by its role and name
+instead of by pixels, then click it. Every returned element must be disposed.
+
+**Find and click a button**
+
+```csharp
+using var button = laz.Accessibility.Find(AccessibleRole.Button, "OK");
+if (button != null)
+{
+    laz.Mouse.JumpTo(button.Bounds.Center);
+    laz.Mouse.Click();
+}
+```
+
+**Wait for a control to appear**
+
+`WaitFor(predicate, timeout)` polls the tree until a matching element appears. Pass `root` to search inside one
+window instead of the whole desktop, which is much faster.
+
+```csharp
+using var window = laz.Accessibility.WaitFor(
+    e => e.Role == AccessibleRole.Window && e.Name == "Settings", TimeSpan.FromSeconds(10));
+using var field = laz.Accessibility.Find(e => e.AutomationId == "username", root: window);
+Console.WriteLine(field?.Value);
+```
+
+**Inspect what is under the pointer or focused**
+
+```csharp
+using var hovered = laz.Accessibility.ElementFromPoint(laz.Mouse.GetPosition());
+using var focused = laz.Accessibility.GetFocusedElement();
+Console.WriteLine($"{hovered} / {focused?.Role} {focused?.States}");
+```
+
+Some toolkits build their accessibility tree only for assistive technologies. Start Chromium and Electron apps with
+`--force-renderer-accessibility`, and enable the Java Access Bridge for Java apps.
+
 ## Building
 
 To learn how build the project and run the tests, check the [`BUILDING.md`](BUILDING.md) file or one of the 

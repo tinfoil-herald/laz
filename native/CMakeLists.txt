@@ -50,6 +50,8 @@ target_include_directories(LazHeaders INTERFACE
 
 target_sources(LazHeaders INTERFACE
     "${CMAKE_SOURCE_DIR}/include/laz_api.h"
+    "${CMAKE_SOURCE_DIR}/include/laz_a11y.h"
+    "${CMAKE_SOURCE_DIR}/include/laz_export.h"
     "${CMAKE_SOURCE_DIR}/include/color.h"
     "${CMAKE_SOURCE_DIR}/include/key_code.h"
     "${CMAKE_SOURCE_DIR}/include/mouse_button.h"

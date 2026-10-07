@@ -36,6 +36,9 @@ public class Lazbot
     /// <summary>Screen capture.</summary>
     public Screen Screen { get; }
 
+    /// <summary>Read-only access to the accessibility tree.</summary>
+    public Accessibility Accessibility { get; }
+
     /// <summary>
     /// Initializes a new <see cref="Lazbot"/> instance for the current platform.
     /// </summary>
@@ -65,6 +68,7 @@ public class Lazbot
         Mouse = new Mouse(nativeLazbot);
         Keyboard = new Keyboard();
         Screen = new Screen();
+        Accessibility = new Accessibility();
     }
     
     private static TimeSpan? ReadDefaultDelay()

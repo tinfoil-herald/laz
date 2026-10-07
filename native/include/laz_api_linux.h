@@ -10,6 +10,7 @@
 #include "key_code.h"
 #include "mouse_button.h"
 #include "point.h"
+#include "laz_a11y.h"
 
 #if defined(__linux__)
 #else

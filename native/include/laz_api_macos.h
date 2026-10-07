@@ -9,6 +9,7 @@
 #include "point.h"
 #include "mouse_button.h"
 #include "key_code.h"
+#include "laz_a11y.h"
 
 #if defined(__APPLE__)
 #else

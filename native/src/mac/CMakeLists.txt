@@ -14,6 +14,8 @@ add_library(Laz MODULE
         screen.mm
         clipboard.mm
         layout.mm
+        # TODO: replace with an AXUIElement backend (a11y.mm).
+        ../common/a11y_unavailable.c
 )
 
 target_include_directories(Laz PRIVATE
